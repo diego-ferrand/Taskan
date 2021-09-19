@@ -5,5 +5,5 @@ if __name__ == "__main__":
     # cf = CollapsingFrame(app)
     # cf.pack(fill='both')
     # cf.add(TaskPage(app.container), title="Expand Task", style="primary.TButton")
-    app.add_window(TaskPage(app.container).add_min_view())
+    app.add_window(TaskPage(app.container))
     app.mainloop()

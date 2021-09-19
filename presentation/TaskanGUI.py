@@ -85,39 +85,33 @@ class Taskan(tk.Tk):
         frame.tkraise()
 
 
+def remove_widgets_from_grid(widgets_lst: list[[ttk.Frame]]):
+    for column in range(len(widgets_lst)):
+        for row in range(len(widgets_lst[column])):
+            widgets_lst[column][row].grid_remove()
+
+
+def display_widgets_to_grid(widgets_lst: list[[ttk.Frame]]):
+    for column in range(len(widgets_lst)):
+        for row in range(len(widgets_lst[column])):
+            widgets_lst[column][row].grid(row=row+1, column=column)
+
+
 class TaskPage(ttk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.images = [tk.PhotoImage(name='open', file='presentation/assets/doubleup.png'),
                        tk.PhotoImage(name='closed', file='presentation/assets/doubledown.png'),
-                       tk.PhotoImage(name="menu", file='presentation/assets/hamburger_icon.png').subsample(9)]
+                       tk.PhotoImage(name="config", file='presentation/assets/hamburger_icon.png').subsample(9)]
         self.columnconfigure(0, weight=1)
         self.cumulative_rows = 0
+        self.extended_view_elements = [
+            [tk.Button(image=self.images[2], bg=CONFIG['bg'])]
+        ]
+        self.add_min_view()
 
     def add_min_view(self):
-        return MinimumView(self)
-
-
-class ExtendedView(TaskPage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.columnconfigure(0, weight=1)
-        self.cumulative_rows = 0
-
-        config_button = tk.Button(image=self.images[2], bg=CONFIG['bg'])
-        config_button.pack()
-        self.config = config_button
-        self.grid(row=self.cumulative_rows + 1, column=0, sticky='news')
-        # config_button.grid(column=0, row=2)
-
-
-class MinimumView(TaskPage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        extended_section = ExtendedView()
-
-        toggle_button = tk.Button(text="v", command=lambda c=extended_section: self._toggle_open_close(c))
+        self.toggle_button = tk.Button(text="v", command=self._toggle_open_close)
         label = tk.Label(
             text="<<Task Name>>",
             fg=CONFIG['fg'],
@@ -125,60 +119,20 @@ class MinimumView(TaskPage):
             font=LARGE_FONT
         )
         next_button = tk.Button(text=">", bg=CONFIG['bg'])
-        toggle_button.grid(column=0, row=0)
+        self.toggle_button.grid(column=0, row=0)
         label.grid(column=1, row=0)
         next_button.grid(column=2, row=0)
 
-    def _toggle_open_close(self, child):
+    def _toggle_open_close(self):
         """
         Open or close the section and change the toggle button image accordingly
 
         :param ttk.Frame child: the child element to add or remove from grid manager
         """
-        if child.winfo_viewable():
-            child.grid_remove()
-            # child.btn.configure(image='closed')
+        if self.extended_view_elements[0][0].winfo_viewable():
+            remove_widgets_from_grid(self.extended_view_elements)
+            self.toggle_button.config(text="v")
         else:
-            child.grid()
-            # child.btn.configure(image='open')
+            display_widgets_to_grid(self.extended_view_elements)
+            self.toggle_button.config(text="^")
 
-
-class CollapsingFrame(ttk.Frame):
-    """
-    A collapsible frame widget that opens and closes with a button click.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.columnconfigure(0, weight=1)
-        self.cumulative_rows = 0
-
-    def add(self, child: ttk.Frame, title: str = "", style: str = 'primary.TButton', **kwargs):
-        """Add a child to the collapsible frame
-
-        :param ttk.Frame child: the child frame to add to the widget
-        :param str title: the title appearing on the collapsible section header
-        :param str style: the ttk style to apply to the collapsible section header
-        """
-        if child.winfo_class() != 'TFrame':  # must be a frame
-            return
-        style_color = style.split('.')[0]
-        frm = ttk.Frame(self, style=f'{style_color}.TFrame')
-        frm.grid(row=self.cumulative_rows, column=0, sticky='ew')
-
-        # header title
-        lbl = ttk.Label(frm, text=title, style=f'{style_color}.Invert.TLabel')
-        if kwargs.get('textvariable'):
-            lbl.configure(textvariable=kwargs.get('textvariable'))
-        lbl.pack(side='left', fill='both', padx=10)
-
-        # header toggle button
-        btn = ttk.Button(frm, image='open', style=style, command=lambda c=child: self._toggle_open_close(child))
-        btn.pack(side='right')
-
-        # assign toggle button to child so that it's accesible when toggling (need to change image)
-        child.btn = btn
-        child.grid(row=self.cumulative_rows + 1, column=0, sticky='news')
-
-        # increment the row assignment
-        self.cumulative_rows += 2
