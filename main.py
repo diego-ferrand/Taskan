@@ -1,7 +1,8 @@
 from presentation.TaskanGUI import *
 
 if __name__ == "__main__":
-    app = Taskan()
+    _task = Task("<<Task Name>>", "<<Task Description>>\n<<Additional Task description>>", 1)
+    app = Taskan(_task)
     # cf = CollapsingFrame(app)
     # cf.pack(fill='both')
     # cf.add(TaskPage(app.container), title="Expand Task", style="primary.TButton")
