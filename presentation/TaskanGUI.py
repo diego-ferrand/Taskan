@@ -1,6 +1,6 @@
+from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
-
 import pystray
 from PIL import Image
 from pystray import MenuItem as item
