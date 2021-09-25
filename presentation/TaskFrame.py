@@ -72,8 +72,10 @@ class TaskPage(ttk.Frame):
         :param ttk.Frame child: the child element to add or remove from grid manager
         """
         if self.extended_view_elements[0]["Menu"].winfo_viewable():
+            self.taskan.toggle_menu(False)
             remove_widgets_from_grid(self.extended_view_elements)
             self.min_elements["ExtendedToggle"].config(text="v")
         else:
+            self.taskan.toggle_menu(True)
             display_widgets_to_grid(self.extended_view_elements, 1)
             self.min_elements["ExtendedToggle"].config(text="^")

@@ -4,7 +4,7 @@ from tkinter import ttk
 import pystray
 from PIL import Image
 from pystray import MenuItem as item
-from typing import List
+from typing import List, Dict
 
 from business import Task
 
@@ -12,13 +12,15 @@ from business import Task
 class Taskan(tk.Tk):
     def __init__(self, task: Task, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self._menu_bar = self.initialize_menu_bar()
+        self.toggle_menu(False)
         self.curr_task = task
         self.frames = {}
         self.container = tk.Frame(self)
         self.last_click_x = 0
         self.last_click_y = 0
         self.initialize_window()
-        self.initialize_menu_bar()
+        self.update()
 
     def add_window(self, frame: ttk.Frame):
         self.frames[frame.__class__] = frame
@@ -28,16 +30,27 @@ class Taskan(tk.Tk):
 
         self.show_frame(frame.__class__)
 
+    def key_pressed(self, event):
+        if event.keysym != "Escape":
+            return
+
+    def toggle_menu(self, display: bool):
+        if display:
+            self._menu_bar = self.initialize_menu_bar()
+        else:
+            self._menu_bar.delete(0, tk.END)
+
     def initialize_window(self):
         self.overrideredirect(True)
         self.protocol('WM_DELETE_WINDOW', self.hide_window)
         # self.protocol('WM__WINDOW', self.hide_window)
         self.bind('<Button-1>', self.save_last_click_pos)
         self.bind('<B1-Motion>', self._move_window_to_mouse_pos)
+        self.bind_all('<KeyPress>', self.key_pressed)
         self.wm_attributes("-topmost", 1)
         self.geometry(f"+{int(self.winfo_screenwidth() / 2)}+0")
-        self.container.grid_rowconfigure(0, weight=1)
-        self.container.grid_columnconfigure(0, weight=1)
+        self.container.grid_rowconfigure(0, weight=0)
+        self.container.grid_columnconfigure(0, weight=0)
 
     def save_last_click_pos(self, event):
         self.last_click_x = event.x
@@ -61,8 +74,8 @@ class Taskan(tk.Tk):
         helpmenu.add_command(label="Help Index", command=print("Help invoked"))
         helpmenu.add_command(label="About...", command=print("About invoked"))
         menubar.add_cascade(label="Help", menu=helpmenu)
-
         self.config(menu=menubar)
+        return menubar
 
     def quit_window(self, icon):
         icon.stop()
@@ -84,16 +97,16 @@ class Taskan(tk.Tk):
         frame.tkraise()
 
 
-def _iterate_widgets_apply_code(code: str, widgets_lst: List[List[ttk.Frame]]):
+def _iterate_widgets_apply_code(code: str, widgets_lst: List[Dict[List[ttk.Frame]]]):
     for row in range(len(widgets_lst)):
         for column, key in enumerate(widgets_lst[row]):
             eval(code)
 
 
-def remove_widgets_from_grid(widgets_lst: List[List[ttk.Frame]]):
+def remove_widgets_from_grid(widgets_lst: List[Dict[List[ttk.Frame]]]):
     _iterate_widgets_apply_code("widgets_lst[row][key].grid_remove()", widgets_lst)
 
 
-def display_widgets_to_grid(widgets_lst: List[List[ttk.Frame]], row_offset):
+def display_widgets_to_grid(widgets_lst: List[Dict[List[ttk.Frame]]], row_offset):
     _iterate_widgets_apply_code(f"widgets_lst[row][key].grid(row=row+{row_offset}, column=column, sticky='N')",
                                 widgets_lst)
