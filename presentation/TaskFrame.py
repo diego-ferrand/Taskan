@@ -54,10 +54,15 @@ class TaskPage(ttk.Frame):
         self.min_elements["TaskName"].config(state=state)
         self.extended_view_elements[0]["TaskDescription"].config(state=state)
 
+    def is_in_editmode(self):
+        return self.min_elements["TaskName"].cget("state") == tk.NORMAL
+
     def _toggle_editable(self):
-        if self.min_elements["TaskName"].cget("state") == tk.NORMAL:
+        if self.is_in_editmode():
+            self.taskan.set_movable_window(True)
             self._set_text_state(tk.DISABLED)
         else:
+            self.taskan.set_movable_window(False)
             self._set_text_state(tk.NORMAL)
 
     def _display_min_view(self):
@@ -72,7 +77,11 @@ class TaskPage(ttk.Frame):
         :param ttk.Frame child: the child element to add or remove from grid manager
         """
         if self.extended_view_elements[0]["Menu"].winfo_viewable():
+            if self.is_in_editmode():
+                self._toggle_editable()
+
             self.taskan.toggle_menu(False)
+
             remove_widgets_from_grid(self.extended_view_elements)
             self.min_elements["ExtendedToggle"].config(text="v")
         else:

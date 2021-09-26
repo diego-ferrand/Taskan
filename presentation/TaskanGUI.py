@@ -20,6 +20,7 @@ class Taskan(tk.Tk):
         self.last_click_x = 0
         self.last_click_y = 0
         self.initialize_window()
+        self.movable_window = True
         self.update()
 
     def add_window(self, frame: ttk.Frame):
@@ -56,17 +57,23 @@ class Taskan(tk.Tk):
         self.last_click_x = event.x
         self.last_click_y = event.y
 
+    def set_movable_window(self, movable: bool):
+        self.movable_window = movable
+
     def _move_window_to_mouse_pos(self, event):
+        if not self.movable_window:
+            return
         x, y = event.x - self.last_click_x + self.winfo_x(), event.y - self.last_click_y + self.winfo_y()
         self.geometry("+%s+%s" % (x, y))
 
     def initialize_menu_bar(self):
         menubar = tk.Menu(self)
         filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="New", command=print("New invoked"))
-        filemenu.add_command(label="Open", command=print("Open invoked"))
-        filemenu.add_command(label="Save", command=print("Save invoked"))
+        filemenu.add_command(label="Show backlog", command=print("New invoked"))
+        filemenu.add_command(label="Import tasks", command=print("Open invoked"))
+        filemenu.add_command(label="Export tasks", command=print("Save invoked"))
         filemenu.add_separator()
+        filemenu.add_command(label="Do not disturb", command=self.hide_window)
         filemenu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=filemenu)
 
@@ -97,16 +104,16 @@ class Taskan(tk.Tk):
         frame.tkraise()
 
 
-def _iterate_widgets_apply_code(code: str, widgets_lst: List[Dict[List[ttk.Frame]]]):
+def _iterate_widgets_apply_code(code: str, widgets_lst: List):
     for row in range(len(widgets_lst)):
         for column, key in enumerate(widgets_lst[row]):
             eval(code)
 
 
-def remove_widgets_from_grid(widgets_lst: List[Dict[List[ttk.Frame]]]):
+def remove_widgets_from_grid(widgets_lst: List):
     _iterate_widgets_apply_code("widgets_lst[row][key].grid_remove()", widgets_lst)
 
 
-def display_widgets_to_grid(widgets_lst: List[Dict[List[ttk.Frame]]], row_offset):
+def display_widgets_to_grid(widgets_lst: List, row_offset: int):
     _iterate_widgets_apply_code(f"widgets_lst[row][key].grid(row=row+{row_offset}, column=column, sticky='N')",
                                 widgets_lst)
