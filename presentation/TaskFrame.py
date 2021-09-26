@@ -20,7 +20,7 @@ class TaskPage(ttk.Frame):
             "ExtendedToggle": tk.Button(text="v", command=self._toggle_open_close),
             "TaskName": tk.Text(fg=CONFIG['fg'], bg=CONFIG['bg'], font=LARGE_FONT,
                                 width="13", height="1"),
-            "NextTask": tk.Button(text=">", bg=CONFIG['bg'])
+            "NextTask": tk.Button(text=">", bg=CONFIG['bg'], command=self._next_task)
         }
 
         self.extended_view_elements = [
@@ -36,8 +36,11 @@ class TaskPage(ttk.Frame):
             }
         ]
         self.taskan = self.master.master
-        self.set_task(self.taskan.curr_task)
+        self.set_task(self.taskan.tasks.get_current())
         self._display_min_view()
+
+    def _next_task(self):
+        self.set_task(self.taskan.tasks.next_task())
 
     def _clear_task(self):
         self.min_elements["TaskName"].delete(1.0, tk.END)

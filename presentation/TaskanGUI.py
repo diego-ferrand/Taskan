@@ -6,15 +6,15 @@ from PIL import Image
 from pystray import MenuItem as item
 from typing import List, Dict
 
-from business import Task
+from business.Task import TaskContainer
 
 
 class Taskan(tk.Tk):
-    def __init__(self, task: Task, *args, **kwargs):
+    def __init__(self, tasks: TaskContainer, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self._menu_bar = self.initialize_menu_bar()
         self.toggle_menu(False)
-        self.curr_task = task
+        self.tasks = tasks
         self.frames = {}
         self.container = tk.Frame(self)
         self.last_click_x = 0
