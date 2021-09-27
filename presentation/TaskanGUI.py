@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import platform
 import tkinter as tk
 from tkinter import ttk
 import pystray
@@ -36,6 +38,8 @@ class Taskan(tk.Tk):
             return
 
     def toggle_menu(self, display: bool):
+        if platform.system() == "Darwin":
+            return
         if display:
             self._menu_bar = self.initialize_menu_bar()
         else:
@@ -44,12 +48,11 @@ class Taskan(tk.Tk):
     def initialize_window(self):
         self.overrideredirect(True)
         self.protocol('WM_DELETE_WINDOW', self.hide_window)
-        # self.protocol('WM__WINDOW', self.hide_window)
+        self.geometry(f"+{int(self.winfo_screenwidth() / 2)}+0")
         self.bind('<Button-1>', self.save_last_click_pos)
         self.bind('<B1-Motion>', self._move_window_to_mouse_pos)
         self.bind_all('<KeyPress>', self.key_pressed)
         self.wm_attributes("-topmost", 1)
-        self.geometry(f"+{int(self.winfo_screenwidth() / 2)}+0")
         self.container.grid_rowconfigure(0, weight=0)
         self.container.grid_columnconfigure(0, weight=0)
 

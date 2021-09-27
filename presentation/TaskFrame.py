@@ -17,22 +17,22 @@ class TaskPage(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.cumulative_rows = 0
         self.min_elements = {
-            "ExtendedToggle": tk.Button(text="v", command=self._toggle_open_close),
-            "TaskName": tk.Text(fg=CONFIG['fg'], bg=CONFIG['bg'], font=LARGE_FONT,
-                                width="13", height="1"),
-            "NextTask": tk.Button(text=">", bg=CONFIG['bg'], command=self._next_task)
+            "ExtendedToggle": ttk.Button(text="v", command=self._toggle_open_close,  width=0),
+            "TaskName": tk.Text(fg=CONFIG['fg'], bg=CONFIG['bg'],
+                                width="25", height="1"),
+            "NextTask": ttk.Button(text=">", command=self._next_task, width=0)
         }
 
         self.extended_view_elements = [
             {
-                "Menu": tk.Button(image=self.images[2], bg=CONFIG['bg']),
+                "Menu": ttk.Button(image=self.images[2]),
                 "TaskDescription": tk.Text(
                     fg=CONFIG['fg'],
                     bg=CONFIG['bg'],
                     font=LARGE_FONT,
                     width="25", height="10"
                 ),
-                "Edit": tk.Button(image=self.images[3], bg=CONFIG['bg'], command=self._toggle_editable)
+                "Edit": ttk.Button(image=self.images[3], command=self._toggle_editable)
             }
         ]
         self.taskan = self.master.master
