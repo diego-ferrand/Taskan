@@ -107,6 +107,11 @@ class Taskan(tk.Tk):
         frame.tkraise()
 
 
+class TaskanFrame(ttk.Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.taskan = self.master.master
+
 def _iterate_widgets_apply_code(code: str, widgets_lst: List):
     for row in range(len(widgets_lst)):
         for column, key in enumerate(widgets_lst[row]):
@@ -120,3 +125,6 @@ def remove_widgets_from_grid(widgets_lst: List):
 def display_widgets_to_grid(widgets_lst: List, row_offset: int):
     _iterate_widgets_apply_code(f"widgets_lst[row][key].grid(row=row+{row_offset}, column=column, sticky='N')",
                                 widgets_lst)
+
+
+

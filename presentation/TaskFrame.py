@@ -4,10 +4,10 @@ from typing import Union
 
 from business import Task
 from presentation.Config import CONFIG, LARGE_FONT
-from presentation.TaskanGUI import display_widgets_to_grid, remove_widgets_from_grid
+from presentation.TaskanGUI import display_widgets_to_grid, remove_widgets_from_grid, TaskanFrame
 
 
-class TaskPage(ttk.Frame):
+class TaskPage(TaskanFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.images = [tk.PhotoImage(name='open', file='presentation/assets/doubleup.png'),
@@ -35,7 +35,6 @@ class TaskPage(ttk.Frame):
                 "Edit": ttk.Button(image=self.images[3], command=self._toggle_editable)
             }
         ]
-        self.taskan = self.master.master
         self.set_task(self.taskan.tasks.get_current())
         self._display_min_view()
 

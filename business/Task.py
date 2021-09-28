@@ -2,6 +2,11 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 
 
+class TaskType(Enum):
+    LOCAL = auto()
+    IMPORTED = auto()
+
+
 class TaskStatus(Enum):
     PENDING = auto()
     IN_PROGRESS = auto()
@@ -19,9 +24,6 @@ class Task:
 
 
 class TaskContainer:
-    tasks: list
-    current: Task
-
     def __init__(self):
         _t1 = Task("<<First Task>>", "<<Task Description>>\n<<Additional Task description>>", 1, TaskStatus.IN_PROGRESS)
         _t2 = Task("<<Second Task>>", "<<Task Description>>\n<<Additional Task description>>", 2, TaskStatus.PENDING)
