@@ -4,6 +4,7 @@ from typing import Union
 
 from business import Task
 from presentation.Config import CONFIG, LARGE_FONT
+from presentation.TaskManagement import TaskManagement
 from presentation.TaskanGUI import display_widgets_to_grid, remove_widgets_from_grid, TaskanFrame
 
 
@@ -17,7 +18,7 @@ class TaskPage(TaskanFrame):
         self.columnconfigure(0, weight=1)
         self.cumulative_rows = 0
         self.min_elements = {
-            "ExtendedToggle": ttk.Button(text="v", command=self._toggle_open_close,  width=0),
+            "ExtendedToggle": ttk.Button(text="v", command=self._toggle_open_close, width=0),
             "TaskName": tk.Text(fg=CONFIG['fg'], bg=CONFIG['bg'],
                                 width="25", height="1"),
             "NextTask": ttk.Button(text=">", command=self._next_task, width=0)
@@ -25,7 +26,7 @@ class TaskPage(TaskanFrame):
 
         self.extended_view_elements = [
             {
-                "Menu": ttk.Button(image=self.images[2]),
+                "Menu": ttk.Button(image=self.images[2], command=self.display_task_management),
                 "TaskDescription": tk.Text(
                     fg=CONFIG['fg'],
                     bg=CONFIG['bg'],
@@ -37,6 +38,10 @@ class TaskPage(TaskanFrame):
         ]
         self.set_task(self.taskan.tasks.get_current())
         self._display_min_view()
+
+    def display_task_management(self):
+        tsk_management = TaskManagement(self.taskan)
+        # self.taskan.add_window(tsk_management)
 
     def _next_task(self):
         self.set_task(self.taskan.tasks.next_task())
